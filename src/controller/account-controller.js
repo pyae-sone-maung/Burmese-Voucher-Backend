@@ -7,7 +7,7 @@ const createAccount = async (req, res) => {
 
         try {
             const businessInfo = {
-                username: req.body.username,
+                username: (req.body.username).toLowerCase(),
                 password: hash,
                 businessName: req.body.businessName || "",
                 businessType: req.body.businessType || "",
@@ -78,7 +78,7 @@ const updateAccount = async (req, res) => {
         if (err) return res.sendStatus(500);
         try {
             const updateData = {
-                username: req.body.username,
+                username: req.body.username || result.username,
                 password: hash,
             };
             await accountModel.findByIdAndUpdate(
