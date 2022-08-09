@@ -71,11 +71,23 @@ const updateVoucherById = async (req, res) => {
     }
 };
 
-const searchVoucherByDate = async (req, res) => {
+// နေ့ရက်ဖြင့်ဘောင်ချာရှာမည်
+const searchBalanceVoucherByDate = async (req, res) => {
     const date = new Date(req.body.date);
     try {
         const data = await voucherModel
-            .find({ date: date })
+            .find({ date: date, balanceAmount: { $gt: 0 } })
+            .sort({ totalAmount: -1 });
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.sendStatus(500);
+    }
+};
+const searchRecordVoucherByDate = async (req, res) => {
+    const date = new Date(req.body.date);
+    try {
+        const data = await voucherModel
+            .find({ date: date, balanceAmount: { $eq: 0 } })
             .sort({ totalAmount: -1 });
         return res.status(200).json(data);
     } catch (error) {
@@ -86,7 +98,7 @@ const searchVoucherByDate = async (req, res) => {
 // လက်ကျန်ငွေဘောင်ချာ
 const showBalanceVouchers = async (req, res) => {
     try {
-        const data = await voucherModel.find({ balanceAmount: { $gt: 0 } });
+        const data = await voucherModel.find({ balanceAmount: { $gt: 0 } }).sort({ date: -1 });
         return res.status(200).json(data);
     } catch (error) {
         return res.sendStatus(500);
@@ -95,7 +107,7 @@ const showBalanceVouchers = async (req, res) => {
 
 const showRecordVouchers = async (req, res) => {
     try {
-        const data = await voucherModel.find({ balanceAmount: { $eq: 0 } });
+        const data = await voucherModel.find({ balanceAmount: { $eq: 0 } }).sort({ date: -1 });
         return res.status(200).json(data);
     } catch (error) {
         return res.sendStatus(500);
@@ -107,7 +119,8 @@ module.exports = {
     viewVoucherById,
     deleteVoucherById,
     updateVoucherById,
-    searchVoucherByDate,
+    searchBalanceVoucherByDate,
+    searchRecordVoucherByDate,
     showBalanceVouchers,
     showRecordVouchers,
 };
