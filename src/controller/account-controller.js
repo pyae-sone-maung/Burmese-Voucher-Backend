@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken')
 const accountModel = require("../model/account-model");
 
 const createAccount = async (req, res) => {
@@ -32,14 +33,21 @@ const login = async (req, res) => {
             return res.sendStatus(404);
         } else {
             bcrypt.compare(password, data.password, (err, result) => {
-                if (result)
+                if (result) {
+                    const token = jwt.sign({ username, password }, process.env.JWT_SECRET, {
+                        expiresIn: '24h'
+                    })
                     return res.status(200).json({
-                        id: data._id,
-                        businessName: data.businessName,
-                        businessType: data.businessType,
-                        address: data.address,
-                        phone: data.phone,
+                        token: token,
+                        data: {
+                            id: data._id,
+                            businessName: data.businessName,
+                            businessType: data.businessType,
+                            address: data.address,
+                            phone: data.phone,
+                        }
                     });
+                }
                 return res.sendStatus(401);
             });
         }
