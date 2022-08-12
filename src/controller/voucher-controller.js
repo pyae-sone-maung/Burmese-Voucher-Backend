@@ -71,7 +71,7 @@ const updateVoucherById = async (req, res) => {
     }
 };
 
-// နေ့ရက်ဖြင့်ဘောင်ချာရှာမည်
+// နေ့ရက်ဖြင့် လက်ကျန်ငွေဘောင်ချာရှာမည်
 const searchBalanceVoucherByDate = async (req, res) => {
     const date = new Date(req.body.date);
     try {
@@ -83,8 +83,11 @@ const searchBalanceVoucherByDate = async (req, res) => {
         return res.sendStatus(500);
     }
 };
+
+// နေ့ရက်ဖြင့် မှတ်တမ်းဘောင်ချာရှာမည်
 const searchRecordVoucherByDate = async (req, res) => {
     const date = new Date(req.body.date);
+
     try {
         const data = await voucherModel
             .find({ date: date, balanceAmount: { $eq: 0 } })
@@ -105,10 +108,25 @@ const showBalanceVouchers = async (req, res) => {
     }
 };
 
+// မှတ်တမ်းဘောင်ချာ
 const showRecordVouchers = async (req, res) => {
+    const options = req.query;
+    const limit = 10;
+    const page = parseInt(options.page) || 1;
+    const skip = (page - 1) * limit;
+
+    const totalPage = (item) => {
+        if (item % limit === 0) return item / limit;
+        else return parseInt((item / limit).toFixed()) + 1;
+    }
+
     try {
-        const data = await voucherModel.find({ balanceAmount: { $eq: 0 } }).sort({ date: -1 });
-        return res.status(200).json(data);
+        const totalItem = await voucherModel.countDocuments({ balanceAmount: { $eq: 0 } });
+        const data = await voucherModel.find({ balanceAmount: { $eq: 0 } }).skip(skip).limit(limit).sort({ date: -1 });
+        return res.status(200).json({
+            meta: { totalPage: totalPage(totalItem) },
+            data,
+        });
     } catch (error) {
         return res.sendStatus(500);
     }
