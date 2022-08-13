@@ -116,7 +116,8 @@ const showRecordVouchers = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const totalPage = (item) => {
-        if (item % limit === 0) return item / limit;
+        if (item <= limit) return 1;
+        else if (item % limit === 0) return item / limit;
         else return parseInt((item / limit).toFixed()) + 1;
     }
 
