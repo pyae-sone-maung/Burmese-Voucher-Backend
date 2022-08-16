@@ -87,10 +87,11 @@ const searchBalanceVoucherByDate = async (req, res) => {
 // နေ့ရက်ဖြင့် မှတ်တမ်းဘောင်ချာရှာမည်
 const searchRecordVoucherByDate = async (req, res) => {
     const date = JSON.stringify(new Date(req.body.date));
+    console.log(typeof (date))
 
     try {
         const data = await voucherModel
-            .find({ date: date, balanceAmount: { $eq: 0 } })
+            .find({ date: JSON.parse(date), balanceAmount: { $eq: 0 } })
             .sort({ totalAmount: -1 });
         return res.status(200).json(data);
     } catch (error) {
