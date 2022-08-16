@@ -86,7 +86,7 @@ const searchBalanceVoucherByDate = async (req, res) => {
 
 // နေ့ရက်ဖြင့် မှတ်တမ်းဘောင်ချာရှာမည်
 const searchRecordVoucherByDate = async (req, res) => {
-    const date = new Date(req.body.date);
+    const date = JSON.stringify(new Date(req.body.date));
 
     try {
         const data = await voucherModel
