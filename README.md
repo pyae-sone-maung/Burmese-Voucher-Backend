@@ -15,7 +15,7 @@ cd Burmese-Voucher-Backend
 npm install
 ```
 
--   Find .env file and config variable
+-   Create .env file in root folder and config variable below.
 
 ```
 PORT = 5000
